@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 export default function History() {
   const [signals, setSignals] = useState<SignalData[]>([]);
   useEffect(() => {
-    supabase.from("signals").select("*").order("created_at", { descending: true }).then(({ data }) => setSignals((data as any) ?? []));
+    supabase.from("signals").select("*").order("created_at", { ascending: false }).then(({ data }) => setSignals((data as any) ?? []));
   }, []);
   return (
     <div className="space-y-6">

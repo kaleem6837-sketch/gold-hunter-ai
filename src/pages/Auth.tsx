@@ -48,13 +48,7 @@ export default function Auth() {
   };
 
   const google = async () => {
-    try {
-      const { lovable } = await import("@/integrations/lovable/index");
-      const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/app" });
-      if (r.error) toast.error("Google sign-in failed");
-    } catch {
-      toast.error("Google sign-in not configured yet");
-    }
+    toast.info("Google sign-in coming soon — use email for now");
   };
 
   return (

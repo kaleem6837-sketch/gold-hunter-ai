@@ -14,7 +14,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("signals").select("*").order("created_at", { descending: true }).limit(5)
+    supabase.from("signals").select("*").order("created_at", { ascending: false }).limit(5)
       .then(({ data }) => {
         if (!data) return;
         setSignals(data as any);
