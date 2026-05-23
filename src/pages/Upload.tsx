@@ -69,7 +69,12 @@ export default function UploadChart() {
       nav(`/app/result/${inserted.id}`);
     } catch (e: any) {
       console.error(e);
-      toast.error(e.message?.includes("Rate") ? "AI rate limit — try again shortly" : e.message ?? "Analysis failed");
+      const msg = typeof e?.message === "string" ? e.message : "";
+      if (msg.includes("Rate") || msg.toLowerCase().includes("rate limit")) toast.error("AI rate limit — try again shortly");
+      else if (msg.includes("credits")) toast.error("AI credits exhausted — please top up your workspace.");
+      else if (msg === "Image too large") toast.error("Image too large — max 8 MB.");
+      else if (msg === "Unauthorized") toast.error("Please sign in again.");
+      else toast.error("Analysis failed. Please try again.");
     } finally { setBusy(false); }
   };
 
