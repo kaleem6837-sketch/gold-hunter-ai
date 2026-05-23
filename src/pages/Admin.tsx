@@ -1,33 +1,25 @@
 import { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useApp } from "@/contexts/AppContext";
 import { Card } from "@/components/ui/card";
 import { ShieldCheck, Users, Activity, Target } from "lucide-react";
 
 export default function Admin() {
-  const { user } = useApp();
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const { isAdmin, loading } = useApp();
   const [stats, setStats] = useState({ signals: 0, avg: 0 });
 
   useEffect(() => {
-    if (!user) return;
-    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle()
-      .then(({ data }) => setIsAdmin(!!data));
+    if (!isAdmin) return;
     supabase.from("signals").select("confidence").then(({ data }) => {
       if (!data) return;
       const avg = data.length ? Math.round(data.reduce((s, r) => s + (r.confidence || 0), 0) / data.length) : 0;
       setStats({ signals: data.length, avg });
     });
-  }, [user]);
+  }, [isAdmin]);
 
-  if (isAdmin === null) return <p className="text-muted-foreground">Checking permissions…</p>;
-  if (!isAdmin) return (
-    <Card className="p-10 text-center border-border/60 bg-card/60">
-      <ShieldCheck className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-      <h1 className="text-xl font-semibold">Admin access required</h1>
-      <p className="text-sm text-muted-foreground mt-1">Your account doesn't have admin privileges.</p>
-    </Card>
-  );
+  if (loading) return <p className="text-muted-foreground">Loading…</p>;
+  if (!isAdmin) return <Navigate to="/app" replace />;
 
   return (
     <div className="space-y-6">
