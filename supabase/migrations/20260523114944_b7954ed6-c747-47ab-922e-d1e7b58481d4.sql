@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.prevent_premium_tier_self_update() FROM PUBLIC, anon, authenticated;
