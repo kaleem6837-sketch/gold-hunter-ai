@@ -4,13 +4,14 @@ import { LayoutDashboard, Upload, History, Settings, Crown, Bell, ShieldCheck, L
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
-const baseNav = [
-  { to: "/app", icon: LayoutDashboard, key: "dashboard" as const, end: true },
-  { to: "/app/upload", icon: Upload, key: "uploadChart" as const },
-  { to: "/app/history", icon: History, key: "history" as const },
-  { to: "/app/notifications", icon: Bell, key: "notifications" as const },
-  { to: "/app/premium", icon: Crown, key: "premium" as const },
-  { to: "/app/settings", icon: Settings, key: "settings" as const },
+type NavItem = { to: string; icon: typeof LayoutDashboard; key: any; end?: boolean };
+const baseNav: NavItem[] = [
+  { to: "/app", icon: LayoutDashboard, key: "dashboard", end: true },
+  { to: "/app/upload", icon: Upload, key: "uploadChart" },
+  { to: "/app/history", icon: History, key: "history" },
+  { to: "/app/notifications", icon: Bell, key: "notifications" },
+  { to: "/app/premium", icon: Crown, key: "premium" },
+  { to: "/app/settings", icon: Settings, key: "settings" },
 ];
 
 export default function AppLayout() {
