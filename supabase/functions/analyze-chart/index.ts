@@ -1,4 +1,5 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const SYSTEM = `You are XAU Hunter AI — an elite trading analyst specialized in XAUUSD (Gold).
 You receive a screenshot of a candlestick chart (TradingView or similar) and you must produce a structured signal.
@@ -32,9 +33,31 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
+    // Auth check
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+    );
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claims, error: authErr } = await supabase.auth.getClaims(token);
+    if (authErr || !claims?.claims) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     const { imageBase64 } = await req.json();
     if (!imageBase64 || typeof imageBase64 !== "string") {
       return new Response(JSON.stringify({ error: "imageBase64 required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    if (!imageBase64.startsWith("data:image/")) {
+      return new Response(JSON.stringify({ error: "Invalid image payload" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const MAX_B64_LEN = 11_000_000; // ~8 MB binary
+    if (imageBase64.length > MAX_B64_LEN) {
+      return new Response(JSON.stringify({ error: "Image too large" }), { status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const apiKey = Deno.env.get("LOVABLE_API_KEY");

@@ -4,19 +4,22 @@ import { LayoutDashboard, Upload, History, Settings, Crown, Bell, ShieldCheck, L
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
-const nav = [
-  { to: "/app", icon: LayoutDashboard, key: "dashboard" as const, end: true },
-  { to: "/app/upload", icon: Upload, key: "uploadChart" as const },
-  { to: "/app/history", icon: History, key: "history" as const },
-  { to: "/app/notifications", icon: Bell, key: "notifications" as const },
-  { to: "/app/premium", icon: Crown, key: "premium" as const },
-  { to: "/app/settings", icon: Settings, key: "settings" as const },
-  { to: "/app/admin", icon: ShieldCheck, key: "admin" as const },
+type NavItem = { to: string; icon: typeof LayoutDashboard; key: any; end?: boolean };
+const baseNav: NavItem[] = [
+  { to: "/app", icon: LayoutDashboard, key: "dashboard", end: true },
+  { to: "/app/upload", icon: Upload, key: "uploadChart" },
+  { to: "/app/history", icon: History, key: "history" },
+  { to: "/app/notifications", icon: Bell, key: "notifications" },
+  { to: "/app/premium", icon: Crown, key: "premium" },
+  { to: "/app/settings", icon: Settings, key: "settings" },
 ];
 
 export default function AppLayout() {
-  const { user, loading, t, lang, setLang, signOut } = useApp();
+  const { user, loading, isAdmin, t, lang, setLang, signOut } = useApp();
   const nav2 = useNavigate();
+  const nav = isAdmin
+    ? [...baseNav, { to: "/app/admin", icon: ShieldCheck, key: "admin" as const }]
+    : baseNav;
 
   useEffect(() => {
     if (!loading && !user) nav2("/auth", { replace: true });
