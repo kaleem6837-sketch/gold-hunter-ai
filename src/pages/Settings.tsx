@@ -20,7 +20,7 @@ export default function Settings() {
   const save = async () => {
     if (!user) return;
     const { error } = await supabase.from("user_settings").upsert({ ...s, user_id: user.id });
-    if (error) toast.error(error.message); else toast.success("Saved");
+    if (error) { console.error(error); toast.error("Failed to save settings. Please try again."); } else toast.success("Saved");
   };
 
   return (
