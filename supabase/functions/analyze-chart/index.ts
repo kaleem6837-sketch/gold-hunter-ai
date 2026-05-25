@@ -27,7 +27,11 @@ If any confirmation is missing or unclear, set signal = "WAIT".
 
 Confidence: integer 0-100. WAIT signals must be < 60.
 
-You must call the function emit_signal exactly once with the structured result. Reasoning items should be short professional bullets in English (max 10).`;
+You must call the function emit_signal exactly once with the structured result. Reasoning items should be short professional bullets in English (max 10).
+
+Focus heavily on SMC + ICT: market structure shifts, premium/discount zones, inducement, liquidity grabs, breaker blocks, mitigation blocks, and FVG rebalancing.
+
+Also score setup authenticity and risk profile clearly.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -96,8 +100,11 @@ Deno.serve(async (req) => {
               required: ["pattern", "liquidity", "bos_choch", "crt", "trend", "multi_tf"],
             },
             reasoning: { type: "array", items: { type: "string" }, maxItems: 10 },
+            setup_authenticity: { type: "integer", minimum: 0, maximum: 100 },
+            authenticity_note: { type: "string" },
+            risk_grade: { type: "string", enum: ["A+", "A", "B", "C", "D"] },
           },
-          required: ["pair", "signal", "confidence", "timeframe", "trend", "pattern", "confirmations", "reasoning"],
+          required: ["pair", "signal", "confidence", "timeframe", "trend", "pattern", "confirmations", "reasoning", "setup_authenticity", "authenticity_note", "risk_grade"],
         },
       },
     }];

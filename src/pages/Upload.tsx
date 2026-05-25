@@ -82,7 +82,7 @@ export default function UploadChart() {
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{t("uploadChart")}</h1>
-        <p className="text-muted-foreground mt-1">Drop your XAUUSD chart screenshot and let AI find the trade.</p>
+        <p className="text-muted-foreground mt-1">Drop your XAUUSD chart screenshot and let AI study SMC + ICT confluences to suggest the next move.</p>
       </div>
 
       <Card className="p-2 bg-card/80 backdrop-blur border-border/60">
@@ -110,7 +110,7 @@ export default function UploadChart() {
 
       <Card className="p-4 bg-card/60 border-border/60">
         <p className="text-xs text-muted-foreground">
-          AI runs through: timeframe detection → trend → support/resistance → liquidity zones → BOS / CHOCH → CRT → Order Blocks → FVG → pattern recognition → multi-TF confirmation. Signal only fires when confluences align.
+          AI brain runs through: SMC + ICT structure map → premium/discount + liquidity pools → BOS/CHOCH → inducement/sweep validation → OB/FVG alignment → multi-timeframe confluence. It also gives setup authenticity (%) and risk grade before any BUY/SELL call.
         </p>
       </Card>
     </div>
