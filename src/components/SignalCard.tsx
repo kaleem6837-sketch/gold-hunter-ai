@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Minus, CheckCircle2 } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, CheckCircle2, ShieldCheck } from "lucide-react";
 
 export interface SignalData {
   pair: string;
@@ -15,6 +15,11 @@ export interface SignalData {
   reasoning?: string[];
   confirmations?: Record<string, boolean>;
   created_at?: string;
+  raw_analysis?: {
+    setup_authenticity?: number;
+    authenticity_note?: string;
+    risk_grade?: string;
+  } | null;
 }
 
 const fmt = (n?: number | null) => (n == null ? "—" : n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 3 }));
@@ -25,6 +30,10 @@ export function SignalCard({ data }: { data: SignalData }) {
   const isWait = data.signal === "WAIT";
   const Icon = isBuy ? TrendingUp : isSell ? TrendingDown : Minus;
   const color = isBuy ? "bull" : isSell ? "bear" : "warning";
+
+  const setupAuthenticity = data.raw_analysis?.setup_authenticity;
+  const authenticityNote = data.raw_analysis?.authenticity_note;
+  const riskGrade = data.raw_analysis?.risk_grade;
 
   return (
     <Card className="overflow-hidden border-border/60 bg-card/80 backdrop-blur shadow-[var(--shadow-card)]">
@@ -61,6 +70,22 @@ export function SignalCard({ data }: { data: SignalData }) {
       )}
 
       <div className="p-4 md:p-5 space-y-3">
+        {(typeof setupAuthenticity === "number" || authenticityNote || riskGrade) && (
+          <div className="rounded-lg border border-border/60 bg-background/40 p-3 space-y-2">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <ShieldCheck className="w-4 h-4 text-primary" /> Setup Authenticity
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs">
+              {typeof setupAuthenticity === "number" && (
+                <Badge variant="outline" className="border-primary/40 text-primary">Authenticity: {setupAuthenticity}%</Badge>
+              )}
+              {riskGrade && (
+                <Badge variant="outline" className="border-warning/40 text-warning">Risk Grade: {riskGrade}</Badge>
+              )}
+            </div>
+            {authenticityNote && <p className="text-xs text-muted-foreground">{authenticityNote}</p>}
+          </div>
+        )}
         {data.confirmations && Object.keys(data.confirmations).length > 0 && (
           <div className="flex flex-wrap gap-2">
             {Object.entries(data.confirmations).map(([k, v]) => (
